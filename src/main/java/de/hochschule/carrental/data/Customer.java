@@ -2,10 +2,10 @@ package de.hochschule.carrental.data;
 
 public class Customer {
 
-    private static String ID;
-    private static String Name;
-    private static String DLNumber;
-    private static String Email;
+    private String ID;
+    private String Name;
+    private String DLNumber;
+    private String Email;
 
     public Customer(String ID, String Name, String DLNumber, String Email){
         this.ID = ID;
@@ -15,35 +15,35 @@ public class Customer {
     }
 
 
-    public static String getID() {
+    public String getID() {
         return ID;
     }
 
-    public static void setID(String ID) {
-        Customer.ID = ID;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
-    public static String getName() {
+    public String getName() {
         return Name;
     }
 
-    public static void setName(String name) {
+    public void setName(String name) {
         Name = name;
     }
 
-    public static String getDLNumber() {
+    public String getDLNumber() {
         return DLNumber;
     }
 
-    public static void setDLNumber(String DLNumber) {
-        Customer.DLNumber = DLNumber;
+    public void setDLNumber(String DLNumber) {
+        this.DLNumber = DLNumber;
     }
 
-    public static String getEmail() {
+    public String getEmail() {
         return Email;
     }
 
-    public static void setEmail(String email) {
-        Email = email;
+    public void setEmail(String email) {
+        this.Email = email;
     }
 }

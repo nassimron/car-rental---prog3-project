@@ -4,12 +4,12 @@ public class Car {
 
 
 
-    private static String ID;
-    private static String Brand;
-    private static String Model;
-    private static String Category;
-    private static float Price;
-    private static boolean Availability;
+    private String ID;
+    private String Brand;
+    private String Model;
+    private String Category;
+    private float Price;
+    private boolean Availability;
 
     public Car(String ID, String Brand, String Model, String Category, float Price, boolean Availability){
         this.ID = ID;
@@ -20,51 +20,51 @@ public class Car {
         this.Availability = Availability;
     }
 
-    public static String getID() {
+    public String getID() {
         return ID;
     }
 
-    public static void setID(String ID) {
-        Car.ID = ID;
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
-    public static String getBrand() {
+    public String getBrand() {
         return Brand;
     }
 
-    public static void setBrand(String brand) {
+    public void setBrand(String brand) {
         Brand = brand;
     }
 
-    public static String getModel() {
+    public String getModel() {
         return Model;
     }
 
-    public static void setModel(String model) {
+    public void setModel(String model) {
         Model = model;
     }
 
-    public static String getCategory() {
+    public String getCategory() {
         return Category;
     }
 
-    public static void setCategory(String category) {
+    public void setCategory(String category) {
         Category = category;
     }
 
-    public static float getPrice() {
+    public float getPrice() {
         return Price;
     }
 
-    public static void setPrice(float price) {
+    public void setPrice(float price) {
         Price = price;
     }
 
-    public static boolean isAvailability() {
+    public boolean getAvailability() {
         return Availability;
     }
 
-    public static void setAvailability(boolean availability) {
+    public void setAvailability(boolean availability) {
         Availability = availability;
     }
 }
