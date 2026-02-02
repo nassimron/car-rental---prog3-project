@@ -10,7 +10,7 @@ public class Contract {
     private Car Car;
     private LocalDate BeginDate;
     private LocalDate EndDate;
-    private float Price;
+    private int Price;
 
     public Contract(String ID, Customer Customer, Car Car, LocalDate BeginDate, LocalDate EndDate, int Price) {
         this.ID = ID;
@@ -64,11 +64,11 @@ public class Contract {
         EndDate = endDate;
     }
 
-    public float getPrice() {
+    public int getPrice() {
         return Price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         Price = price;
     }
 }

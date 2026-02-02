@@ -52,7 +52,7 @@ public class Car {
         Category = category;
     }
 
-    public float getPrice() {
+    public int getPrice() {
         return Price;
     }
 

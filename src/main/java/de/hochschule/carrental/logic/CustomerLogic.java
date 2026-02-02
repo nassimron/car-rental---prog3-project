@@ -1,23 +1,48 @@
 package de.hochschule.carrental.logic;
 
+import de.hochschule.carrental.data.Car;
 import de.hochschule.carrental.data.Customer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomerLogic {
 
-    public CustomerLogic(){
+    private final List<Customer> customers;
+
+    public CustomerLogic() {
+        this.customers = new ArrayList<>();
     }
 
-    private Customer create(String ID, String Name, String DLNumber, String Email){
-        return new Customer(ID,Name,DLNumber,Email);
+    private Customer create(String ID, String Name, String DLNumber, String Email) {
+        if (ID == null || ID.isBlank()) throw new IllegalArgumentException("Customer ID is required");
+        if (Name == null || Name.isBlank()) throw new IllegalArgumentException("Name is required");
+        if (DLNumber == null || DLNumber.isBlank()) throw new IllegalArgumentException("DLN is required");
+        if (Email == null || Email.isBlank()) throw new IllegalArgumentException("Email is required");
+
+        Customer customer = new Customer(ID, Name, DLNumber, Email);
+        customers.add(customer);
+        return customer;
     }
 
-    private void delete(Customer customer){
+    public void delete(String id){
+        customers.removeIf(c -> c.getID().equals(id));
+    }
 
+    public List<Customer> getAllCustomers() {
+        return customers;
+    }
+
+    public Customer getCustomerById(String id) {
+        for (Customer c : customers) {
+            if (c.getID().equals(id)) {
+                return c;
+            }
+        }
+        return null;
     }
 
     private void saveToDb(){
 
     }
-
-
 }
