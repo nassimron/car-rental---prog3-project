@@ -10,7 +10,7 @@ class CarTest {
 
     @BeforeEach
     void setUp() {
-        car = new Car("C01", "Volkswagen", "Amarok", "SUV", 299.99f, true);
+        car = new Car("C01", "Volkswagen", "Amarok", "SUV", 300, true);
     }
 
     @Test
@@ -19,7 +19,7 @@ class CarTest {
         assertEquals("Volkswagen", car.getBrand());
         assertEquals("Amarok", car.getModel());
         assertEquals("SUV", car.getCategory());
-        assertEquals(299.99f, car.getPrice());
+        assertEquals(300, car.getPrice());
         assertTrue(car.getAvailability());
     }
 
@@ -49,8 +49,8 @@ class CarTest {
 
     @Test
     void testSetPrice() {
-        car.setPrice(450.00f);
-        assertEquals(450.00f, car.getPrice());
+        car.setPrice(450);
+        assertEquals(450, car.getPrice());
     }
 
     @Test

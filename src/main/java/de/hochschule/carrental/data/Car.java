@@ -8,10 +8,10 @@ public class Car {
     private String Brand;
     private String Model;
     private String Category;
-    private float Price;
+    private int Price;
     private boolean Availability;
 
-    public Car(String ID, String Brand, String Model, String Category, float Price, boolean Availability){
+    public Car(String ID, String Brand, String Model, String Category, int Price, boolean Availability){
         this.ID = ID;
         this.Brand = Brand;
         this.Model = Model;
@@ -56,7 +56,7 @@ public class Car {
         return Price;
     }
 
-    public void setPrice(float price) {
+    public void setPrice(int price) {
         Price = price;
     }
 

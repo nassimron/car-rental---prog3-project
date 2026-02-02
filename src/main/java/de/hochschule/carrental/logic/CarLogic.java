@@ -7,7 +7,7 @@ public class CarLogic {
     public CarLogic(){
     }
 
-    private Car create(String ID, String Brand, String Model, String Category, float Price, boolean Availability){
+    private Car create(String ID, String Brand, String Model, String Category, int Price, boolean Availability){
         return new Car(ID,Brand,Model,Category,Price,Availability);
     }
 

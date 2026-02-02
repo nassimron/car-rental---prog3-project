@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+
 class ContractTest {
 
     private Contract contract;
@@ -13,8 +15,8 @@ class ContractTest {
     @BeforeEach
     void setUp() {
         customer = new Customer("U001", "Barack Obama", "DL12345", "barack.obama@gmail.com");
-        car = new Car("C01", "Volkswagen", "Amarok", "SUV", 299.99f, true);
-        contract = new Contract("V001", customer, car, "2026-01-01", "2026-01-10", 2999.99f);
+        car = new Car("C01", "Volkswagen", "Amarok", "SUV", 300, true);
+        contract = new Contract("V001", customer, car, LocalDateTime.parse("2026-01-01"), LocalDateTime.parse("2026-01-10"), 300);
     }
 
     @Test
@@ -28,8 +30,8 @@ class ContractTest {
         assertEquals("V001", contract.getID());
         assertEquals(customer, contract.getCustomer());
         assertEquals(car, contract.getCar());
-        assertEquals("2026-01-01", contract.getBeginDate());
-        assertEquals("2026-01-10", contract.getEndDate());
+        assertEquals(LocalDateTime.parse("2026-01-01"), contract.getBeginDate());
+        assertEquals(LocalDateTime.parse("2026-01-10"), contract.getEndDate());
     }
 
     @Test
@@ -47,21 +49,21 @@ class ContractTest {
 
     @Test
     void testSetCar() {
-        Car newCar = new Car ("C002", "Ferrari","F40", "Sportwagen", 450.00f, true );
+        Car newCar = new Car ("C002", "Ferrari","F40", "Sportwagen", 450, true );
         contract.setCar(newCar);
         assertEquals(newCar, contract.getCar());
     }
 
     @Test
     void testSetBeginDate() {
-        contract.setBeginDate("2026-02-01");
-        assertEquals("2026-02-01", contract.getBeginDate());
+        contract.setBeginDate(LocalDateTime.parse("2026-02-01"));
+        assertEquals(LocalDateTime.parse("2026-02-01"), contract.getBeginDate());
     }
 
     @Test
     void testSetEndDate() {
-        contract.setEndDate("2026-02-12");
-        assertEquals("2026-02-12", contract.getEndDate());
+        contract.setEndDate(LocalDateTime.parse("2026-02-12"));
+        assertEquals(LocalDateTime.parse("2026-02-12"), contract.getEndDate());
     }
 
     @Test

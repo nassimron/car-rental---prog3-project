@@ -24,7 +24,7 @@
         <configuration>
           <jdbc>
             <driver>org.sqlite.JDBC</driver>
-            <url>jdbc:sqlite:TestDb</url>
+            <url>jdbc:sqlite:RentalDB</url>
           </jdbc>
           <generator>
             <database>

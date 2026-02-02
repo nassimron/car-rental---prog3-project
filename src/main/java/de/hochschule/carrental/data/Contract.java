@@ -1,15 +1,17 @@
 package de.hochschule.carrental.data;
 
+import java.time.LocalDateTime;
+
 public class Contract {
 
     private String ID;
     private Customer Customer;
     private Car Car;
-    private String BeginDate;
-    private String EndDate;
+    private LocalDateTime BeginDate;
+    private LocalDateTime EndDate;
     private float Price;
 
-    public Contract(String ID, Customer Customer, Car Car, String BeginDate, String EndDate, float Price) {
+    public Contract(String ID, Customer Customer, Car Car, LocalDateTime BeginDate, LocalDateTime EndDate, int Price) {
         this.ID = ID;
         this.Customer = Customer;
         this.Car = Car;
@@ -45,19 +47,19 @@ public class Contract {
         Customer = customer;
     }
 
-    public String getBeginDate() {
+    public LocalDateTime getBeginDate() {
         return BeginDate;
     }
 
-    public void setBeginDate(String beginDate) {
+    public void setBeginDate(LocalDateTime beginDate) {
         BeginDate = beginDate;
     }
 
-    public String getEndDate() {
+    public LocalDateTime getEndDate() {
         return EndDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         EndDate = endDate;
     }
 
