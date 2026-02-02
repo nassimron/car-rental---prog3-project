@@ -15,10 +15,17 @@ public class CustomerLogic {
     }
 
     private Customer create(String ID, String Name, String DLNumber, String Email) {
-        if (ID == null || ID.isBlank()) throw new IllegalArgumentException("Customer ID is required");
-        if (Name == null || Name.isBlank()) throw new IllegalArgumentException("Name is required");
-        if (DLNumber == null || DLNumber.isBlank()) throw new IllegalArgumentException("DLN is required");
-        if (Email == null || Email.isBlank()) throw new IllegalArgumentException("Email is required");
+        if (ID == null || ID.isBlank())
+            throw new IllegalArgumentException("Customer must not be empty");
+
+        if (Name == null || Name.isBlank())
+            throw new IllegalArgumentException("Name must not be empty");
+
+        if (DLNumber == null || DLNumber.isBlank())
+            throw new IllegalArgumentException("DLN must not be empty");
+
+        if (Email == null || Email.isBlank())
+            throw new IllegalArgumentException("Email must not be empty");
 
         Customer customer = new Customer(ID, Name, DLNumber, Email);
         customers.add(customer);

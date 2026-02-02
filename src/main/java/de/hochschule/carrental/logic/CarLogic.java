@@ -14,9 +14,25 @@ public class CarLogic {
         this.cars = new ArrayList<>();
     }
 
-    public Car create(String ID, String Brand, String Model, String Category, int Price, boolean Availability){
+    public Car create(String id, String brand, String model, String category, int price, boolean availability){
 
-        Car car = new Car(ID, Brand, Model, Category, Price, Availability);
+        if (id == null || id.isBlank())
+            throw new IllegalArgumentException("Car ID must not be empty");
+
+        if (brand == null || brand.isBlank())
+            throw new IllegalArgumentException("Brand must not be empty");
+
+        if (model == null || model.isBlank())
+            throw new IllegalArgumentException("Model must not be empty");
+
+        if (price <= 0)
+            throw new IllegalArgumentException("Price must be greater than 0");
+
+        if (getCarById(id) != null)
+            throw new IllegalStateException("Car with ID " + id + " already exists");
+
+
+        Car car = new Car(id, brand, model, category, price, availability);
         cars.add(car);
         return car;
     }

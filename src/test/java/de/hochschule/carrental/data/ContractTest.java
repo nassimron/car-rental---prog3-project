@@ -70,7 +70,7 @@ class ContractTest {
 
     @Test
     void testSetPrice() {
-        contract.setPrice(1200.50f);
-        assertEquals(1200.50f, contract.getPrice());
+        contract.setPrice(1200);
+        assertEquals(1200, contract.getPrice());
     }
 }

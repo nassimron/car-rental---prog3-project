@@ -16,10 +16,17 @@ public class ContractLogic {
 
 
     public Contract createContract(Customer customer, Car car, LocalDate beginDate, LocalDate endDate) {
-        if (customer == null) throw new IllegalArgumentException("Customer is required");
-        if (car == null) throw new IllegalArgumentException("Car is required");
-        if (beginDate == null || endDate == null) throw new IllegalArgumentException("Dates are required");
-        if (endDate.isBefore(beginDate)) throw new IllegalArgumentException("End date must be >= begin date");
+        if (customer == null)
+            throw new IllegalArgumentException("Customer must not be empty");
+
+        if (car == null)
+            throw new IllegalArgumentException("Car must not be empty");
+
+        if (beginDate == null || endDate == null)
+            throw new IllegalArgumentException("Dates must not be empty");
+
+        if (endDate.isBefore(beginDate))
+            throw new IllegalArgumentException("End date must be >= begin date");
 
         if (!car.getAvailability()) {
             throw new IllegalArgumentException("Car is not available");
