@@ -4,6 +4,7 @@ import de.hochschule.carrental.data.Car;
 import de.hochschule.carrental.data.Contract;
 import de.hochschule.carrental.data.Customer;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class ContractLogic extends Contract{
 
     ArrayList<String> contractIds = new ArrayList<>();
 
-    public Contract create(String ID, Customer customer, Car car, LocalDateTime BeginDate, LocalDateTime EndDate, int Price){
+    public Contract create(String ID, Customer customer, Car car, LocalDate BeginDate, LocalDate EndDate, int Price){
         car.setAvailability(false);
         return new Contract(ID,customer,car,BeginDate,EndDate,Price);
     }
@@ -46,7 +47,7 @@ public class ContractLogic extends Contract{
         return "V" + Id;
     }
 
-    public int calcPrice(int carPrice, LocalDateTime beginDate, LocalDateTime endDate){
+    public int calcPrice(int carPrice, LocalDate beginDate, LocalDate endDate){
         int contractDurationDays = Math.toIntExact(ChronoUnit.DAYS.between(beginDate, endDate));
 
         return carPrice * contractDurationDays;

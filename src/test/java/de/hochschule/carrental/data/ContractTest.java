@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 class ContractTest {
 
@@ -16,7 +18,7 @@ class ContractTest {
     void setUp() {
         customer = new Customer("U001", "Barack Obama", "DL12345", "barack.obama@gmail.com");
         car = new Car("C01", "Volkswagen", "Amarok", "SUV", 300, true);
-        contract = new Contract("V001", customer, car, LocalDateTime.parse("2026-01-01"), LocalDateTime.parse("2026-01-10"), 300);
+        contract = new Contract("V001", customer, car, LocalDate.parse("2026-01-01"), LocalDate.parse("2026-01-10"), 300);
     }
 
     @Test
@@ -30,8 +32,8 @@ class ContractTest {
         assertEquals("V001", contract.getID());
         assertEquals(customer, contract.getCustomer());
         assertEquals(car, contract.getCar());
-        assertEquals(LocalDateTime.parse("2026-01-01"), contract.getBeginDate());
-        assertEquals(LocalDateTime.parse("2026-01-10"), contract.getEndDate());
+        assertEquals(LocalDate.parse("2026-01-01"), contract.getBeginDate());
+        assertEquals(LocalDate.parse("2026-01-10"), contract.getEndDate());
     }
 
     @Test
@@ -56,14 +58,14 @@ class ContractTest {
 
     @Test
     void testSetBeginDate() {
-        contract.setBeginDate(LocalDateTime.parse("2026-02-01"));
-        assertEquals(LocalDateTime.parse("2026-02-01"), contract.getBeginDate());
+        contract.setBeginDate(LocalDate.parse("2026-02-01"));
+        assertEquals(LocalDate.parse("2026-02-01"), contract.getBeginDate());
     }
 
     @Test
     void testSetEndDate() {
-        contract.setEndDate(LocalDateTime.parse("2026-02-12"));
-        assertEquals(LocalDateTime.parse("2026-02-12"), contract.getEndDate());
+        contract.setEndDate(LocalDate.parse("2026-02-12"));
+        assertEquals(LocalDate.parse("2026-02-12"), contract.getEndDate());
     }
 
     @Test

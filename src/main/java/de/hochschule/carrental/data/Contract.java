@@ -1,5 +1,6 @@
 package de.hochschule.carrental.data;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Contract {
@@ -7,11 +8,11 @@ public class Contract {
     private String ID;
     private Customer Customer;
     private Car Car;
-    private LocalDateTime BeginDate;
-    private LocalDateTime EndDate;
+    private LocalDate BeginDate;
+    private LocalDate EndDate;
     private float Price;
 
-    public Contract(String ID, Customer Customer, Car Car, LocalDateTime BeginDate, LocalDateTime EndDate, int Price) {
+    public Contract(String ID, Customer Customer, Car Car, LocalDate BeginDate, LocalDate EndDate, int Price) {
         this.ID = ID;
         this.Customer = Customer;
         this.Car = Car;
@@ -47,19 +48,19 @@ public class Contract {
         Customer = customer;
     }
 
-    public LocalDateTime getBeginDate() {
+    public LocalDate getBeginDate() {
         return BeginDate;
     }
 
-    public void setBeginDate(LocalDateTime beginDate) {
+    public void setBeginDate(LocalDate beginDate) {
         BeginDate = beginDate;
     }
 
-    public LocalDateTime getEndDate() {
+    public LocalDate getEndDate() {
         return EndDate;
     }
 
-    public void setEndDate(LocalDateTime endDate) {
+    public void setEndDate(LocalDate endDate) {
         EndDate = endDate;
     }
 
