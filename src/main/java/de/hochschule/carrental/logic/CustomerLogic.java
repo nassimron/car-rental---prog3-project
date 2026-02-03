@@ -14,7 +14,7 @@ public class CustomerLogic {
         this.customers = new ArrayList<>();
     }
 
-    private Customer create(String ID, String Name, String DLNumber, String Email) {
+    public Customer create(String ID, String Name, String DLNumber, String Email) {
         if (ID == null || ID.isBlank())
             throw new IllegalArgumentException("Customer must not be empty");
 
