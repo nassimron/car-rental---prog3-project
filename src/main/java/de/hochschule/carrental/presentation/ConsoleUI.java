@@ -6,8 +6,8 @@ import de.hochschule.carrental.data.Customer;
 import de.hochschule.carrental.logic.CarLogic;
 import de.hochschule.carrental.logic.ContractLogic;
 import de.hochschule.carrental.logic.CustomerLogic;
-import org.jooq.meta.derby.sys.Sys;
 
+import java.lang.classfile.instruction.ReturnInstruction;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,9 +25,22 @@ public class ConsoleUI {
     ContractLogic contractLogic = new ContractLogic();
 
 
+
     //Startmethode des UI
     public void startUI(){
         mainPage();
+    }
+
+    //Hilfe: immer Zeile lesen und trimmen
+    private String read() {
+        return scanner.nextLine().trim();
+    }
+
+    //Hilfe "press enter"
+    private void pressEnterToContinue(String text) {
+        System.out.println(text);
+        System.out.println("(Press Enter)");
+        scanner.nextLine();
     }
 
 
@@ -40,11 +53,12 @@ public class ConsoleUI {
         System.out.println("3 - Manage Contracts");
         System.out.println("Choose option 0-3: ");
 
-        String input = scanner.nextLine().trim();
+        String input = read();
+
             if (UIHelper.isValidInt(input)) {
                 switch (input) {
                     case "0":
-                        break;
+                        return;
                     case "1":
                         carsMainPage();
                         break;
@@ -55,14 +69,13 @@ public class ConsoleUI {
                         contractsMainPage();
                         break;
                     default:
-                        System.out.println("Not a valid option! Please choose 1-3");
-                        mainPage();
+                        System.out.println("Not a valid option! Please choose 0-3");
                         break;
                 }
             } else {
-                System.out.println("Not a valid option! Please choose 1-3");
-                mainPage();
+                System.out.println("Not a valid option! Please choose 0-3");
             }
+            mainPage();
     }
 
     //Hauptseite für Autoverwaltung
@@ -74,13 +87,13 @@ public class ConsoleUI {
         System.out.println("3 - Add Car");
         System.out.println("Choose option 0-3: ");
 
-        String input = scanner.nextLine().trim();
+        String input = read();
 
         if(isValidInt(input)){
             switch(input) {
                 case "0":
                     mainPage();
-                    break;
+                    return;
                 case "1":
                     listCars(false);
                     break;
@@ -89,12 +102,16 @@ public class ConsoleUI {
                     break;
                 case "3":
                     addCar();
-                    break;
+                    return;
                 default:
                     System.out.println("Not a valid option! Please choose 1-2");
-                    carsMainPage();
+                    break;
             }
+        } else {
+            System.out.println("Not a valid option! Please choose 0-3");
         }
+
+        carsMainPage();
     }
 
     //Hauptseite für Kundenverwaltung
@@ -105,25 +122,28 @@ public class ConsoleUI {
         System.out.println("2 - Add Customer");
         System.out.println("Choose option 0-2: ");
 
-        String input = scanner.nextLine().trim();
+        String input = read();
 
         if(isValidInt(input)){
             switch(input) {
                 case "0":
                     mainPage();
-                    break;
+                    return;
                 case "1":
                     listCustomers();
-                    break;
+                    return;
                 case "2":
                     addCustomer();
-                    break;
+                    return;
                 default:
-                    System.out.println("Not a valid option! Please choose 1-2");
-                    customersMainPage();
+                    System.out.println("Not a valid option! Please choose 0-2");
+                    break;
             }
+        } else {
+            System.out.println("Not a valid option! Please choose 0-2");
         }
 
+        customersMainPage();
     }
 
     //Hauptseite für Vertragsverwaltung
@@ -135,28 +155,32 @@ public class ConsoleUI {
         System.out.println("3 - End Contract");
         System.out.println("Choose option 0-3: ");
 
-        String input = scanner.nextLine().trim();
+        String input = read();
 
         if(isValidInt(input)){
             switch(input) {
                 case "0":
                     mainPage();
-                    break;
+                    return;
                 case "1":
                     listContracts();
-                    break;
+                    return;
                 case "2":
                     setupContract();
-                    break;
+                    return;
                 case "3":
                     endContract();
-                    break;
+                    return;
                 default:
-                    System.out.println("Not a valid option! Please choose 1-3");
-                    contractsMainPage();
+                    System.out.println("Not a valid option! Please choose 0-3");
+                    break;
             }
         }
+        else {
+            System.out.println("Not a valid option! Please choose 0-3");
+        }
 
+        contractsMainPage();
     }
 
     //Auflisten aller Autos
@@ -174,53 +198,54 @@ public class ConsoleUI {
             }
         }
 
-        System.out.println("Press any button to return to Car-Management");
-        String input = scanner.next();
+        pressEnterToContinue("Return to Car-Management");
         carsMainPage();
+
     }
 
     //Anlegen neuer Autos
     private void addCar(){
         System.out.println("Please provide the Brand of the Car: ");
-        String brand = scanner.next();
+        String brand = read();
 
-        while(brand.trim().isEmpty()){
+        while(brand.isEmpty()){
             System.out.println("Brand must not be empty!");
             System.out.println("Please provide the Brand of the Car: ");
-            brand = scanner.next();
+            brand = read();
         }
 
         System.out.println("Please provide the Model of the Car: ");
-        String model = scanner.next();
+        String model = read();
 
-        while(model.trim().isEmpty()){
+        while(model.isEmpty()){
             System.out.println("Model must not be empty!");
             System.out.println("Please provide the Model of the Car: ");
-            model = scanner.next();
+            model = read();
         }
 
         System.out.println("Please provide the Category of the Car: ");
-        String category = scanner.next();
+        String category = read();
 
-        while(category.trim().isEmpty()){
+        while(category.isEmpty()){
             System.out.println("Category must not be empty!");
             System.out.println("Please provide the Category of the Car: ");
-            category = scanner.next();
+            category = read();
         }
 
         System.out.println("Please provide the Price of the Car: ");
-        String priceString = scanner.next();
+        String priceString = read();
 
-        while(!(isValidInt(priceString.trim()))){
+        while(!(isValidInt(priceString))){
             System.out.println("Price must be a valid Integer");
             System.out.println("Please provide the Price of the Car: ");
-            priceString = scanner.next();
+            priceString = read();
         }
 
         int price = Integer.parseInt(priceString);
 
         carLogic.create("test",brand,model,category,price,false);
 
+        pressEnterToContinue("Car created. Return to Car-Management");
         carsMainPage();
     }
 
@@ -233,65 +258,74 @@ public class ConsoleUI {
             System.out.println(customer.getID() + " | " + customer.getName() + " | " + customer.getDLNumber() + " | " + customer.getEmail());
         }
 
-        System.out.println("Press any button to return to Customer-Management");
-        String input = scanner.next();
+        pressEnterToContinue("Car created. Return to Car-Management");
         customersMainPage();
     }
 
     //Anlegen neuer Kunden
     private void addCustomer(){
         System.out.println("Please provide Name of the Customer");
-        String name = scanner.next();
+        String name = read();
 
-        while(name.trim().isEmpty()){
+        while(name.isEmpty()){
             System.out.println("Name must not be empty!");
             System.out.println("Please provide the Name of the Customer: ");
-            name = scanner.next();
+            name = read();
         }
 
         System.out.println("Please provide Driver License Number of the Customer");
-        String dlNumber = scanner.next();
+        String dlNumber = read();
 
         while(dlNumber.trim().isEmpty()){
             System.out.println("Driver License Number must not be empty!");
             System.out.println("Please provide the Driver License Number of the Customer: ");
-            dlNumber = scanner.next();
+            dlNumber = read();
         }
 
         System.out.println("Please provide Email-Address of the Customer");
-        String email = scanner.next();
+        String email = read();
 
-        while(email.trim().isEmpty()){
+        while(email.isEmpty()){
             System.out.println("Email-Address must not be empty!");
             System.out.println("Please provide the Email-Address of the Customer: ");
-            email = scanner.next();
+            email = read();
         }
 
         customerLogic.create("test",name,dlNumber,email);
+        pressEnterToContinue("Customer created. Return to Customer-Management");
+        customersMainPage();
     }
 
     //Auflisten aller Verträge
     private void listContracts(){
+        System.out.println("--------Contracts----------");
         List<Contract> contractList = contractLogic.getAllContracts();
 
         for(Contract contract : contractList){
             System.out.println(contract.getID() + " | " + contract.getCustomer().getID() + " | " + contract.getCar().getID() + " | " + contract.getBeginDate() + " | " + contract.getEndDate() + " | " + contract.getPrice());
         }
+        pressEnterToContinue("Return to Contract-Management");
+        contractsMainPage();
     }
 
     //Anlegen eines neuen Vertrages
     private void setupContract(){
+        System.out.println("Not implemented yet.");
+        pressEnterToContinue("Return to Contract-Management");
+        contractsMainPage();
 
     }
 
     //Beenden eines Vertrages
     private void endContract(){
         System.out.println("Please provide ID of the contract that should be ended: ");
-        String input = scanner.nextLine();
+        String input = read();
 
         if(isValidContractID(input)){
             if(contractLogic.getContractById(input) != null){
                 contractLogic.finishContract(input);
+                pressEnterToContinue("Contract ended. Return to Contract-Management");
+                contractsMainPage();
             } else {
                 System.out.println("The provided ID is not associated with a Contract!");
                 endContract();
