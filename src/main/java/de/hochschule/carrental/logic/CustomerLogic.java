@@ -62,13 +62,9 @@ public class CustomerLogic {
         return max + 1;
     }
 
+    public Customer create( String name, String dlNumber, String email) {
 
-    public Customer create(String name, String dlNumber, String email) {
         String id = "K" + getNextCustomerNumber();
-        return create(id, name, dlNumber, email);
-    }
-
-    public Customer create(String id, String name, String dlNumber, String email) {
 
         if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Customer ID must not be empty");

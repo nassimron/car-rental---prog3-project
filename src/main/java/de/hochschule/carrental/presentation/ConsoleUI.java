@@ -6,10 +6,10 @@ import de.hochschule.carrental.data.Customer;
 import de.hochschule.carrental.logic.CarLogic;
 import de.hochschule.carrental.logic.ContractLogic;
 import de.hochschule.carrental.logic.CustomerLogic;
-import org.jooq.meta.derby.sys.Sys;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,9 +19,10 @@ public class ConsoleUI {
 
     Scanner scanner = new Scanner(System.in);
 
-    CarLogic carLogic = new CarLogic();
-    CustomerLogic customerLogic = new CustomerLogic();
     ContractLogic contractLogic = new ContractLogic();
+    CarLogic carLogic = contractLogic.getCarLogic();
+    CustomerLogic customerLogic = contractLogic.getCustomerLogic();
+
 
     public void startUI(){
         mainPage();
@@ -188,10 +189,7 @@ public class ConsoleUI {
 
         int price = Integer.parseInt(priceString);
 
-        int next = carLogic.getNextCarNumber();
-        String id = "A" + next;
-
-        carLogic.create(id, brand, model, category, price, true);
+        carLogic.create(brand, model, category, price, true);
 
 
         pressEnterToContinue("Car created.");
@@ -366,37 +364,58 @@ public class ConsoleUI {
         System.out.println("Please provide a Car ID to assign a Car to the Contract: ");
 
         String carID = read();
-        while(!isValidCarID(carID) || carLogic.getCarById(carID) == null){
-            System.out.println("The provided ID is not a valid Car ID! ");
-            System.out.println("Please provide a valid Car ID: ");
+
+        while(true){
+            if(!isValidCarID(carID) || carLogic.getCarById(carID) == null) {
+                System.out.println("The provided ID is not a valid Car ID! ");
+                System.out.println("Please provide a valid Car ID: ");
+            } else {
+                if(carLogic.getCarById(carID).getAvailability()) {
+                    break;
+                }
+            }
+            System.out.println("The provided Car is not available right now!");
+            System.out.println("Please provide a Car ID of an available Car: ");
             carID = read();
         }
 
-        System.out.println("Please provide the beginning Date of the contract: ");
-        String beginDateString = read();
+        LocalDate beginDate = null; //Definierung von Datum-Variablen zur Nutzung außerhalb der while-Schleife
+        LocalDate endDate = null;
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //while-Schleife zur Überprüfung von nicht negativer Anzahl an Tagen
+        while(true) {
+            System.out.println("Please provide the beginning Date of the contract: ");
+            String beginDateString = read();
 
-        while(!isValidDate(beginDateString)){
-            System.out.println("The provided Date is not in a valid format!");
-            System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
-            beginDateString = read();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+            while (!isValidDate(beginDateString)) {
+                System.out.println("The provided Date is not in a valid format!");
+                System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
+                beginDateString = read();
+            }
+
+            beginDate = LocalDate.parse(beginDateString, formatter);
+
+            System.out.println("Please provide the ending Date of the contract: ");
+            String endDateString = read();
+
+            while (!isValidDate(endDateString)) {
+                System.out.println("The provided Date is not in a valid format!");
+                System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
+                endDateString = read();
+            }
+
+           endDate = LocalDate.parse(endDateString, formatter);
+
+            if(ChronoUnit.DAYS.between(beginDate,endDate) + 1 <= 0) {
+                System.out.println("The provided beginning and ending dates result in a negative amount of days");
+            } else {
+                break;
+            }
         }
 
-        LocalDate beginDate = LocalDate.parse(beginDateString,formatter);
-
-        System.out.println("Please provide the ending Date of the contract: ");
-        String endDateString = read();
-
-        while(!isValidDate(endDateString)){
-            System.out.println("The provided Date is not in a valid format!");
-            System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
-            endDateString = read();
-        }
-
-        LocalDate endDate = LocalDate.parse(endDateString,formatter);
-
-
+        contractLogic.createContract(customerLogic.getCustomerById(customerID),carLogic.getCarById(carID),beginDate,endDate);
 
         pressEnterToContinue("Return to Contract-Management");
     }

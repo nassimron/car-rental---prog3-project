@@ -14,6 +14,7 @@ public class Database {
         }
     }
 
+    //Erstellung von Tables in Datenbank, falls noch nicht vorhanden
     public static void init() {
         String sql = """
             CREATE TABLE IF NOT EXISTS cars (

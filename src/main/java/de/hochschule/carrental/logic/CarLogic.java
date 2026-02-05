@@ -39,7 +39,10 @@ public class CarLogic {
         }
     }
 
-    public Car create(String id, String brand, String model, String category, int price, boolean availability) {
+    public Car create(String brand, String model, String category, int price, boolean availability) {
+
+        String id = "A" + getNextCarNumber();
+
         if (id == null || id.isBlank())
             throw new IllegalArgumentException("Car ID must not be empty");
 
@@ -97,22 +100,6 @@ public class CarLogic {
 
         } catch (SQLException e) {
             System.err.println("Fehler beim Update: " + e.getMessage());
-        }
-    }
-
-    public void delete(String id) {
-        String sql = "DELETE FROM cars WHERE id = ?";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, id);
-            pstmt.executeUpdate();
-
-            cars.removeIf(car -> car.getID().equals(id));
-
-        } catch (SQLException e) {
-            System.err.println("Fehler beim Löschen: " + e.getMessage());
         }
     }
 

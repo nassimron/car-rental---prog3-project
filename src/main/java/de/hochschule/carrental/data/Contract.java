@@ -18,6 +18,7 @@ public class Contract {
         this.Car = Car;
         this.BeginDate = BeginDate;
         this.EndDate = EndDate;
+        this.Price = Price;
     }
 
     public Contract() {
