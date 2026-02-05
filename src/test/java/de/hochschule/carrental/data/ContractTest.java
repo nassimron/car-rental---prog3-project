@@ -5,8 +5,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 class ContractTest {
 
@@ -28,10 +26,11 @@ class ContractTest {
     }
 
     @Test
-    void testContructorAndGetters() {
+    void testConstructorAndGetters() {
         assertEquals("V001", contract.getID());
         assertEquals(customer, contract.getCustomer());
         assertEquals(car, contract.getCar());
+        assertEquals(300, contract.getPrice());
         assertEquals(LocalDate.parse("2026-01-01"), contract.getBeginDate());
         assertEquals(LocalDate.parse("2026-01-10"), contract.getEndDate());
     }
@@ -70,7 +69,7 @@ class ContractTest {
 
     @Test
     void testSetPrice() {
-        contract.setPrice(1200.50f);
-        assertEquals(1200.50f, contract.getPrice());
+        contract.setPrice(1200);
+        assertEquals(1200, contract.getPrice());
     }
 }

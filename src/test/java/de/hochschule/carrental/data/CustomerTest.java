@@ -9,7 +9,7 @@ class CustomerTest {
     private Customer customer;
 
   @BeforeEach
-    void setUP() {
+    void setUp() {
       customer = new Customer("U001", "Barack Obama", "DL12345", "barack.obama@gmail.com");
   }
 
@@ -17,7 +17,7 @@ class CustomerTest {
     void testConstructorAndGetters() {
       assertEquals("U001", customer.getID());
       assertEquals("Barack Obama", customer.getName());
-      assertEquals("DL12345", customer.getDLNumber());
+      assertEquals("DL12345", customer.getDriverLicenseNumber());
       assertEquals("barack.obama@gmail.com", customer.getEmail());
   }
 
@@ -35,8 +35,8 @@ class CustomerTest {
 
  @Test
     void testSetDLNumber() {
-      customer.setDLNumber("DL54321");
-      assertEquals("DL54321", customer.getDLNumber());
+      customer.setDriverLicenseNumber("DL54321");
+      assertEquals("DL54321", customer.getDriverLicenseNumber());
  }
 
  @Test
