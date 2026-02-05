@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: de.hochschule.carrental.logic.CarLogicTest
--------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.024 s -- in de.hochschule.carrental.logic.CarLogicTest
