@@ -9,9 +9,14 @@ Ziel des Projekts ist die Umsetzung eines einfachen Verwaltungssystems
 für Fahrzeuge, Kunden und Mietverträge mit klarer Struktur und Trennung
 der Zuständigkeiten.
 
-Der Fokus liegt auf: - sauberem Code - nachvollziehbarer
-Geschäftslogik - Nutzung einer Datenbank zur Persistenz - Testbarkeit
-durch JUnit
+Das System unterstützt bei der einfachen Verwaltung von Fahrzeugvermietung
+und verhindert fehlerhafte Buchungen durch automatische Prüfungen der Verfügbarkeit.
+
+Der Fokus liegt auf: 
+- sauberem Code
+-  nachvollziehbarer Geschäftslogik
+-   Nutzung einer Datenbank zur Persistenz
+-   Testbarkeit durch JUnit
 
 ------------------------------------------------------------------------
 
@@ -97,17 +102,29 @@ de.hochschule.carrental.App
 
 java -version
 
+Gegebenenfalls Java 17 oder höher installieren.
+
 ### Maven nicht erkannt
 
 mvn -v
 
+Falls Maven nicht gefunden wird, neu installieren und den PATH prüfen.
+
 ------------------------------------------------------------------------
 
-## Autor
+## Support
 
-Lennart Braun
-Sidney Burkhardt
-Amar Chahror
-Nassim Roncoroni
+Bei Fragen oder Problemen zum Projekt kann ein Issue im Repository erstellt
+oder ein Mitglied des Projektteams kontaktiert werden.
 
-Projekt im Rahmen der Veranstaltung **Programmieren 3**
+------------------------------------------------------------------------
+
+## Maintainer
+
+Dieses Projekt wird im Rahmen der Veranstalltung **Programmieren 3**
+entwickelt und gepfelgt von:
+
+- Lennart Braun
+- Sidney Burkhardt
+- Amar Chahror
+- Nassim Roncoroni
