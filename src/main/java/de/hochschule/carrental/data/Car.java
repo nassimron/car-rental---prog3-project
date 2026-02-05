@@ -3,68 +3,73 @@ package de.hochschule.carrental.data;
 public class Car {
 
 
+    private String id;
+    private String brand;
+    private String model;
+    private String category;
+    private int price;
+    private boolean availability;
 
-    private String ID;
-    private String Brand;
-    private String Model;
-    private String Category;
-    private int Price;
-    private boolean Availability;
+    public Car(String id,
+               String brand,
+               String model,
+               String category,
+               int price,
+               boolean available) {
 
-    public Car(String ID, String Brand, String Model, String Category, int Price, boolean Availability){
-        this.ID = ID;
-        this.Brand = Brand;
-        this.Model = Model;
-        this.Category = Category;
-        this.Price = Price;
-        this.Availability = Availability;
+        this.id = id;
+        this.brand = brand;
+        this.model = model;
+        this.category = category;
+        this.price = price;
+        this.availability = available;
     }
 
     public String getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setID(String id) {
+        this.id = id;
     }
 
     public String getBrand() {
-        return Brand;
+        return brand;
     }
 
     public void setBrand(String brand) {
-        Brand = brand;
+        this.brand = brand;
     }
 
     public String getModel() {
-        return Model;
+        return model;
     }
 
     public void setModel(String model) {
-        Model = model;
+        this.model = model;
     }
 
     public String getCategory() {
-        return Category;
+        return category;
     }
 
     public void setCategory(String category) {
-        Category = category;
+        this.category = category;
     }
 
     public int getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(int price) {
-        Price = price;
+        this.price = price;
     }
 
     public boolean getAvailability() {
-        return Availability;
+        return availability;
     }
 
     public void setAvailability(boolean availability) {
-        Availability = availability;
+        this.availability = availability;
     }
 }

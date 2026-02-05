@@ -6,15 +6,23 @@ package de.hochschule.carrental.jooq.tables;
 
 import de.hochschule.carrental.jooq.DefaultSchema;
 import de.hochschule.carrental.jooq.Keys;
+import de.hochschule.carrental.jooq.tables.Cars.CarsPath;
+import de.hochschule.carrental.jooq.tables.Customers.CustomersPath;
 import de.hochschule.carrental.jooq.tables.records.ContractsRecord;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.InverseForeignKey;
 import org.jooq.Name;
+import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
+import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -108,6 +116,37 @@ public class Contracts extends TableImpl<ContractsRecord> {
         this(DSL.name("contracts"), null);
     }
 
+    public <O extends Record> Contracts(Table<O> path, ForeignKey<O, ContractsRecord> childPath, InverseForeignKey<O, ContractsRecord> parentPath) {
+        super(path, childPath, parentPath, CONTRACTS);
+    }
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    public static class ContractsPath extends Contracts implements Path<ContractsRecord> {
+        public <O extends Record> ContractsPath(Table<O> path, ForeignKey<O, ContractsRecord> childPath, InverseForeignKey<O, ContractsRecord> parentPath) {
+            super(path, childPath, parentPath);
+        }
+        private ContractsPath(Name alias, Table<ContractsRecord> aliased) {
+            super(alias, aliased);
+        }
+
+        @Override
+        public ContractsPath as(String alias) {
+            return new ContractsPath(DSL.name(alias), this);
+        }
+
+        @Override
+        public ContractsPath as(Name alias) {
+            return new ContractsPath(alias, this);
+        }
+
+        @Override
+        public ContractsPath as(Table<?> alias) {
+            return new ContractsPath(alias.getQualifiedName(), this);
+        }
+    }
+
     @Override
     public Schema getSchema() {
         return aliased() ? null : DefaultSchema.DEFAULT_SCHEMA;
@@ -116,6 +155,35 @@ public class Contracts extends TableImpl<ContractsRecord> {
     @Override
     public UniqueKey<ContractsRecord> getPrimaryKey() {
         return Keys.CONTRACTS__PK_CONTRACTS;
+    }
+
+    @Override
+    public List<ForeignKey<ContractsRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.CONTRACTS__FK_CONTRACTS_PK_CUSTOMERS, Keys.CONTRACTS__FK_CONTRACTS_PK_CARS);
+    }
+
+    private transient CustomersPath _customers;
+
+    /**
+     * Get the implicit join path to the <code>customers</code> table.
+     */
+    public CustomersPath customers() {
+        if (_customers == null)
+            _customers = new CustomersPath(this, Keys.CONTRACTS__FK_CONTRACTS_PK_CUSTOMERS, null);
+
+        return _customers;
+    }
+
+    private transient CarsPath _cars;
+
+    /**
+     * Get the implicit join path to the <code>cars</code> table.
+     */
+    public CarsPath cars() {
+        if (_cars == null)
+            _cars = new CarsPath(this, Keys.CONTRACTS__FK_CONTRACTS_PK_CARS, null);
+
+        return _cars;
     }
 
     @Override

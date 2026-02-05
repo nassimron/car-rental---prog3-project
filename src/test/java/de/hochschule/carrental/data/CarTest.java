@@ -1,6 +1,7 @@
 package de.hochschule.carrental.data;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,38 +25,20 @@ class CarTest {
     }
 
     @Test
-    void testSetID() {
+    void testSetters() {
+
         car.setID("C002");
-        assertEquals("C002", car.getID());
-    }
-
-    @Test
-    void testSetBrand() {
         car.setBrand("Ferrari");
-        assertEquals("Ferrari", car.getBrand());
-    }
-
-    @Test
-    void testSetModel() {
         car.setModel("F40");
-        assertEquals("F40", car.getModel());
-    }
-
-    @Test
-    void testSetCategory() {
         car.setCategory("Sportwagen");
-        assertEquals("Sportwagen", car.getCategory());
-    }
-
-    @Test
-    void testSetPrice() {
         car.setPrice(450);
-        assertEquals(450, car.getPrice());
-    }
-
-    @Test
-    void testSetAvailability() {
         car.setAvailability(false);
+
+        assertEquals("C002", car.getID());
+        assertEquals("Ferrari", car.getBrand());
+        assertEquals("F40", car.getModel());
+        assertEquals("Sportwagen", car.getCategory());
+        assertEquals(450, car.getPrice());
         assertFalse(car.getAvailability());
     }
 }

@@ -5,71 +5,78 @@ import java.time.LocalDateTime;
 
 public class Contract {
 
-    private String ID;
-    private Customer Customer;
-    private Car Car;
-    private LocalDate BeginDate;
-    private LocalDate EndDate;
-    private int Price;
-
-    public Contract(String ID, Customer Customer, Car Car, LocalDate BeginDate, LocalDate EndDate, int Price) {
-        this.ID = ID;
-        this.Customer = Customer;
-        this.Car = Car;
-        this.BeginDate = BeginDate;
-        this.EndDate = EndDate;
-        this.Price = Price;
-    }
+    private String id;
+    private Customer customer;
+    private Car car;
+    private LocalDate beginDate;
+    private LocalDate endDate;
+    private int price;
 
     public Contract() {
 
     }
 
+    public Contract(String id,
+                    Customer customer,
+                    Car car,
+                    LocalDate beginDate,
+                    LocalDate endDate,
+                    int price) {
+
+        this.id = id;
+        this.customer = customer;
+        this.car = car;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+        this.price = price;
+    }
+
+
     public String getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-
-    public Car getCar() {
-        return Car;
-    }
-
-    public void setCar(Car car) {
-        Car = car;
+    public void setID(String id) {
+        this.id = id;
     }
 
     public Customer getCustomer() {
-        return Customer;
+        return customer;
     }
 
     public void setCustomer(Customer customer) {
-        Customer = customer;
+        this.customer = customer;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 
     public LocalDate getBeginDate() {
-        return BeginDate;
+        return beginDate;
     }
 
     public void setBeginDate(LocalDate beginDate) {
-        BeginDate = beginDate;
+        this.beginDate = beginDate;
     }
 
     public LocalDate getEndDate() {
-        return EndDate;
+        return endDate;
     }
 
     public void setEndDate(LocalDate endDate) {
-        EndDate = endDate;
+        this.endDate = endDate;
     }
 
     public int getPrice() {
-        return Price;
+        return price;
     }
 
     public void setPrice(int price) {
-        Price = price;
+        this.price = price;
     }
 }

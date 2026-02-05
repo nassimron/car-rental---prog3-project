@@ -245,7 +245,7 @@ public class ConsoleUI {
             System.out.println(
                     customer.getID() + " | " +
                             customer.getName() + " | " +
-                            customer.getDLNumber() + " | " +
+                            customer.getDriverLicenseNumber() + " | " +
                             customer.getEmail()
             );
         }

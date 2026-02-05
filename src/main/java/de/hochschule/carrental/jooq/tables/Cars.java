@@ -6,15 +6,20 @@ package de.hochschule.carrental.jooq.tables;
 
 import de.hochschule.carrental.jooq.DefaultSchema;
 import de.hochschule.carrental.jooq.Keys;
+import de.hochschule.carrental.jooq.tables.Contracts.ContractsPath;
 import de.hochschule.carrental.jooq.tables.records.CarsRecord;
 
 import java.util.Collection;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.InverseForeignKey;
 import org.jooq.Name;
+import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
+import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -108,6 +113,37 @@ public class Cars extends TableImpl<CarsRecord> {
         this(DSL.name("cars"), null);
     }
 
+    public <O extends Record> Cars(Table<O> path, ForeignKey<O, CarsRecord> childPath, InverseForeignKey<O, CarsRecord> parentPath) {
+        super(path, childPath, parentPath, CARS);
+    }
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    public static class CarsPath extends Cars implements Path<CarsRecord> {
+        public <O extends Record> CarsPath(Table<O> path, ForeignKey<O, CarsRecord> childPath, InverseForeignKey<O, CarsRecord> parentPath) {
+            super(path, childPath, parentPath);
+        }
+        private CarsPath(Name alias, Table<CarsRecord> aliased) {
+            super(alias, aliased);
+        }
+
+        @Override
+        public CarsPath as(String alias) {
+            return new CarsPath(DSL.name(alias), this);
+        }
+
+        @Override
+        public CarsPath as(Name alias) {
+            return new CarsPath(alias, this);
+        }
+
+        @Override
+        public CarsPath as(Table<?> alias) {
+            return new CarsPath(alias.getQualifiedName(), this);
+        }
+    }
+
     @Override
     public Schema getSchema() {
         return aliased() ? null : DefaultSchema.DEFAULT_SCHEMA;
@@ -116,6 +152,18 @@ public class Cars extends TableImpl<CarsRecord> {
     @Override
     public UniqueKey<CarsRecord> getPrimaryKey() {
         return Keys.CARS__PK_CARS;
+    }
+
+    private transient ContractsPath _contracts;
+
+    /**
+     * Get the implicit to-many join path to the <code>contracts</code> table
+     */
+    public ContractsPath contracts() {
+        if (_contracts == null)
+            _contracts = new ContractsPath(this, null, Keys.CONTRACTS__FK_CONTRACTS_PK_CARS.getInverseKey());
+
+        return _contracts;
     }
 
     @Override
