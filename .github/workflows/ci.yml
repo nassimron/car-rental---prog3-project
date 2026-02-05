@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '23'
-          distribution: ''
+          distribution: 'temurin'
 
       - name: Compile
         run: mvn clean compile
