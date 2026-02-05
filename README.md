@@ -80,7 +80,7 @@ mvn clean test
 
 ### Programm starten
 
-mvn clean compile exec:java
+mvn clean compile exec:java -Dexec.mainClass="de.hochschule.carrental.App"
 
 oder über die IDE mit:
 
