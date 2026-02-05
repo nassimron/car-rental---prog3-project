@@ -7,6 +7,7 @@ import de.hochschule.carrental.data.Database;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +23,22 @@ public class ContractLogic {
 
     private void loadFromDatabase() {
         String sql = "SELECT * FROM contracts";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try (Connection conn = Database.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                // Hier musst du CarLogic und CustomerLogic verwenden
-                // um Car und Customer Objekte zu holen
-                // (Das ist etwas komplexer, aber machbar)
-
-                // Fürs erste speichern wir nur die IDs
-                // Oder wir laden gleich alles zusammen
+                Contract contract = new Contract(
+                        rs.getString("id"),
+                        customerLogic.getCustomerById(rs.getString("customer_id")),
+                        carLogic.getCarById(rs.getString("car_id")),
+                        LocalDate.parse(rs.getString("begin_date"),formatter),
+                        LocalDate.parse(rs.getString("end_date"),formatter),
+                        rs.getInt("price")
+                );
+                contracts.add(contract);
             }
 
         } catch (SQLException e) {
@@ -45,13 +50,6 @@ public class ContractLogic {
     private CarLogic carLogic;
     private CustomerLogic customerLogic;
 
-    public void setCarLogic(CarLogic carLogic) {
-        this.carLogic = carLogic;
-    }
-
-    public void setCustomerLogic(CustomerLogic customerLogic) {
-        this.customerLogic = customerLogic;
-    }
 
     public Contract createContract(Customer customer, Car car, LocalDate beginDate, LocalDate endDate) {
         // Validierung

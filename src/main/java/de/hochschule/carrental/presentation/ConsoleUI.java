@@ -6,12 +6,14 @@ import de.hochschule.carrental.data.Customer;
 import de.hochschule.carrental.logic.CarLogic;
 import de.hochschule.carrental.logic.ContractLogic;
 import de.hochschule.carrental.logic.CustomerLogic;
+import org.jooq.meta.derby.sys.Sys;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
-import static de.hochschule.carrental.presentation.UIHelper.isValidContractID;
-import static de.hochschule.carrental.presentation.UIHelper.isValidInt;
+import static de.hochschule.carrental.presentation.UIHelper.*;
 
 public class ConsoleUI {
 
@@ -351,7 +353,50 @@ public class ConsoleUI {
 
     private void setupContract(){
 
-        System.out.println("Not implemented yet.");
+        System.out.println("Please provide a Customer ID to assign the Contract to: ");
+
+        String customerID = read();
+
+        while(!isValidCustomerID(customerID) || customerLogic.getCustomerById(customerID) == null){
+            System.out.println("The provided ID is not a valid Customer ID! ");
+            System.out.println("Please provide a valid Customer ID: ");
+            customerID = read();
+        }
+
+        System.out.println("Please provide a Car ID to assign a Car to the Contract: ");
+
+        String carID = read();
+        while(!isValidCarID(carID) || carLogic.getCarById(carID) == null){
+            System.out.println("The provided ID is not a valid Car ID! ");
+            System.out.println("Please provide a valid Car ID: ");
+            carID = read();
+        }
+
+        System.out.println("Please provide the beginning Date of the contract: ");
+        String beginDateString = read();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        while(!isValidDate(beginDateString)){
+            System.out.println("The provided Date is not in a valid format!");
+            System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
+            beginDateString = read();
+        }
+
+        LocalDate beginDate = LocalDate.parse(beginDateString,formatter);
+
+        System.out.println("Please provide the ending Date of the contract: ");
+        String endDateString = read();
+
+        while(!isValidDate(endDateString)){
+            System.out.println("The provided Date is not in a valid format!");
+            System.out.println("Please provide a date in the correct format (yyyy-MM-dd): ");
+            endDateString = read();
+        }
+
+        LocalDate endDate = LocalDate.parse(endDateString,formatter);
+
+
 
         pressEnterToContinue("Return to Contract-Management");
     }
