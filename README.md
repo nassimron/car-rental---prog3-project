@@ -22,4 +22,4 @@ Ein einfaches Car-Rental-System mit Schichtenstruktur in Java.
 
 ## Starten
 ```bash
-mvn clean test**
+mvn clean test
