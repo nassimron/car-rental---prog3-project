@@ -15,7 +15,6 @@ public class CustomerLogic {
         loadFromDatabase();
     }
 
-
     private void loadFromDatabase() {
         String sql = "SELECT id, name, dl_number, email FROM customers";
 
@@ -36,7 +35,7 @@ public class CustomerLogic {
             }
 
         } catch (SQLException e) {
-            System.out.println("Fehler beim Laden der Kunden: " + e.getMessage());
+            System.out.println("Error loading customers: " + e.getMessage());
         }
     }
 
@@ -62,17 +61,11 @@ public class CustomerLogic {
         return max + 1;
     }
 
-
     public Customer create(String name, String dlNumber, String email) {
+
         String id = "K" + getNextCustomerNumber();
-        return create(id, name, dlNumber, email);
-    }
 
-    public Customer create(String id, String name, String dlNumber, String email) {
 
-        if (id == null || id.isBlank()) {
-            throw new IllegalArgumentException("Customer ID must not be empty");
-        }
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Name must not be empty");
         }
@@ -82,10 +75,10 @@ public class CustomerLogic {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException("Email must not be empty");
         }
-
-        if (getCustomerById(id) != null) {
-            throw new IllegalStateException("Customer with ID " + id + " already exists");
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Email is invalid");
         }
+
 
         Customer customer = new Customer(id, name, dlNumber, email);
 
@@ -103,23 +96,23 @@ public class CustomerLogic {
 
             pstmt.setString(1, customer.getID());
             pstmt.setString(2, customer.getName());
-            pstmt.setString(3, customer.getDLNumber());
+            pstmt.setString(3, customer.getDriverLicenseNumber());
             pstmt.setString(4, customer.getEmail());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("Fehler beim Speichern des Kunden: " + e.getMessage());
+            System.out.println("Error loading customers: " + e.getMessage());
         }
     }
 
     public List<Customer> getAllCustomers() {
-        return customers;
+        return new ArrayList<>(customers);
     }
 
     public Customer getCustomerById(String id) {
         for (Customer c : customers) {
-            if (c.getID().equals(id)) {
+            if (id != null && id.equals(c.getID())) {
                 return c;
             }
         }

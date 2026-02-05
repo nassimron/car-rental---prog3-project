@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CarLogic {
+    // In-memory list for cache
     private List<Car> cars;
 
     public CarLogic() {
@@ -18,30 +19,27 @@ public class CarLogic {
     private void loadFromDatabase() {
         String sql = "SELECT * FROM cars";
 
-        try (Connection conn = Database.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        cars.clear();
+
+        try (Connection conn = Database.connect(); Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Car car = new Car(
-                        rs.getString("id"),
-                        rs.getString("brand"),
-                        rs.getString("model"),
-                        rs.getString("category"),
-                        rs.getInt("price"),
-                        rs.getBoolean("available")
-                );
+                Car car = new Car(rs.getString("id"), rs.getString("brand"), rs.getString("model"), rs.getString("category"), rs.getInt("price"), rs.getBoolean("available"));
                 cars.add(car);
             }
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Laden: " + e.getMessage());
+            System.err.println("Error loading: " + e.getMessage());
         }
     }
 
-    public Car create(String id, String brand, String model, String category, int price, boolean availability) {
-        if (id == null || id.isBlank())
+    public Car create(String brand, String model, String category, int price, boolean availability) {
+
+        String id = "A" + getNextCarNumber();
+
+        if (id == null || id.isBlank()) {
             throw new IllegalArgumentException("Car ID must not be empty");
+        }
 
         for (Car c : cars) {
             if (c.getID().equals(id)) {
@@ -52,8 +50,8 @@ public class CarLogic {
         Car car = new Car(id, brand, model, category, price, availability);
 
         saveToDatabase(car);
-
         cars.add(car);
+
         return car;
     }
 
@@ -81,8 +79,7 @@ public class CarLogic {
     public void updateAvailability(String carId, boolean available) {
         String sql = "UPDATE cars SET available = ? WHERE id = ?";
 
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Database.connect(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setBoolean(1, available);
             pstmt.setString(2, carId);
@@ -96,23 +93,7 @@ public class CarLogic {
             }
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Update: " + e.getMessage());
-        }
-    }
-
-    public void delete(String id) {
-        String sql = "DELETE FROM cars WHERE id = ?";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, id);
-            pstmt.executeUpdate();
-
-            cars.removeIf(car -> car.getID().equals(id));
-
-        } catch (SQLException e) {
-            System.err.println("Fehler beim Löschen: " + e.getMessage());
+            System.err.println("Error loading: " + e.getMessage());
         }
     }
 
@@ -121,7 +102,7 @@ public class CarLogic {
     }
 
     public Car getCarById(String id) {
-        for(Car car : cars) {
+        for (Car car : cars) {
             if (car.getID().equals(id)) {
                 return car;
             }
@@ -140,12 +121,11 @@ public class CarLogic {
     }
 
     public int getNextCarNumber() {
-
         int max = 0;
 
         for (Car car : getAllCars()) {
 
-            String id = car.getID(); // z.B. "A12"
+            String id = car.getID();
 
             if (id.startsWith("A")) {
                 try {
@@ -153,7 +133,8 @@ public class CarLogic {
                     if (num > max) {
                         max = num;
                     }
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
 

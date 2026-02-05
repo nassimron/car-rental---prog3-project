@@ -11,6 +11,7 @@ import de.hochschule.carrental.jooq.tables.records.CarsRecord;
 import de.hochschule.carrental.jooq.tables.records.ContractsRecord;
 import de.hochschule.carrental.jooq.tables.records.CustomersRecord;
 
+import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
@@ -32,4 +33,11 @@ public class Keys {
     public static final UniqueKey<ContractsRecord> CONTRACTS__PK_CONTRACTS = Internal.createUniqueKey(Contracts.CONTRACTS, DSL.name("pk_contracts"), new TableField[] { Contracts.CONTRACTS.ID }, true);
     public static final UniqueKey<CustomersRecord> CUSTOMERS__PK_CUSTOMERS = Internal.createUniqueKey(Customers.CUSTOMERS, DSL.name("pk_customers"), new TableField[] { Customers.CUSTOMERS.ID }, true);
     public static final UniqueKey<CustomersRecord> CUSTOMERS__UK_CUSTOMERS_36232069 = Internal.createUniqueKey(Customers.CUSTOMERS, DSL.name("uk_customers_36232069"), new TableField[] { Customers.CUSTOMERS.DL_NUMBER }, true);
+
+    // -------------------------------------------------------------------------
+    // FOREIGN KEY definitions
+    // -------------------------------------------------------------------------
+
+    public static final ForeignKey<ContractsRecord, CarsRecord> CONTRACTS__FK_CONTRACTS_PK_CARS = Internal.createForeignKey(Contracts.CONTRACTS, DSL.name("fk_contracts_pk_cars"), new TableField[] { Contracts.CONTRACTS.CAR_ID }, Keys.CARS__PK_CARS, new TableField[] { Cars.CARS.ID }, true);
+    public static final ForeignKey<ContractsRecord, CustomersRecord> CONTRACTS__FK_CONTRACTS_PK_CUSTOMERS = Internal.createForeignKey(Contracts.CONTRACTS, DSL.name("fk_contracts_pk_customers"), new TableField[] { Contracts.CONTRACTS.CUSTOMER_ID }, Keys.CUSTOMERS__PK_CUSTOMERS, new TableField[] { Customers.CUSTOMERS.ID }, true);
 }

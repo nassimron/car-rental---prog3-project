@@ -1,0 +1,31 @@
+name: CI-Pipeline
+on:
+  push:
+    branches: [main,dev]
+  pull_request:
+    branches: [main,dev]
+
+jobs:
+  built-in-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+
+      - name: Compile
+        run: mvn clean compile
+        # Bei Compile-Fehlern: Pipeline stoppt hier!
+
+      - name: Run tests
+        run: mvn test
+        # Bei Test-Fehlern: Pipeline stoppt hier!
+
+      - name: Success message
+        if: success()
+        run: echo "All quality checks passed!"

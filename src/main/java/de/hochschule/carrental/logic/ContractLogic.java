@@ -13,16 +13,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContractLogic {
+
     private final List<Contract> contracts = new ArrayList<>();
-    private int nextId = 1;
+
+
+    private final CarLogic carLogic = new CarLogic();
+    private final CustomerLogic customerLogic = new CustomerLogic();
 
     public ContractLogic() {
         loadFromDatabase();
-        calculateNextId();
+    }
+
+    public CarLogic getCarLogic() {
+        return carLogic;
+    }
+
+    public CustomerLogic getCustomerLogic() {
+        return customerLogic;
     }
 
     private void loadFromDatabase() {
         String sql = "SELECT * FROM contracts";
+
+        contracts.clear();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         try (Connection conn = Database.connect();
@@ -34,44 +48,53 @@ public class ContractLogic {
                         rs.getString("id"),
                         customerLogic.getCustomerById(rs.getString("customer_id")),
                         carLogic.getCarById(rs.getString("car_id")),
-                        LocalDate.parse(rs.getString("begin_date"),formatter),
-                        LocalDate.parse(rs.getString("end_date"),formatter),
+                        LocalDate.parse(rs.getString("begin_date"), formatter),
+                        LocalDate.parse(rs.getString("end_date"), formatter),
                         rs.getInt("price")
                 );
                 contracts.add(contract);
             }
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Laden: " + e.getMessage());
+            System.err.println("Loading error: " + e.getMessage());
         }
     }
 
-    // Einfacher Ansatz: ContractLogic braucht Referenzen auf CarLogic und CustomerLogic
-    private CarLogic carLogic;
-    private CustomerLogic customerLogic;
-
 
     public Contract createContract(Customer customer, Car car, LocalDate beginDate, LocalDate endDate) {
-        // Validierung
-        if (customer == null || car == null)
+
+        if (customer == null || car == null) {
             throw new IllegalArgumentException("Customer and Car must not be empty");
+        }
+
 
         if (!car.getAvailability())
             throw new IllegalArgumentException("Car is not available");
 
-        // Preis berechnen
+        if (beginDate == null || endDate == null) {
+            throw new IllegalArgumentException("Dates must not be empty");
+        }
+
+        if (endDate.isBefore(beginDate)) {
+            throw new IllegalArgumentException("End date must be after begin date");
+        }
+
+        if (!car.getAvailability()) {
+            throw new IllegalArgumentException("Car is not available");
+        }
+
+        String Id = "V" + getNextContractNumber();
+
         int price = calcPrice(car.getPrice(), beginDate, endDate);
-        String id = "V" + nextId++;
 
-        Contract contract = new Contract(id, customer, car, beginDate, endDate, price);
+        Contract contract = new Contract(Id, customer, car, beginDate, endDate, price);
 
-        // In DB speichern
+
         saveToDatabase(contract);
 
-        // Auto als vermietet markieren
+
         carLogic.updateAvailability(car.getID(), false);
 
-        // In Liste speichern
         contracts.add(contract);
         return contract;
     }
@@ -90,10 +113,10 @@ public class ContractLogic {
             pstmt.setInt(6, contract.getPrice());
 
             pstmt.executeUpdate();
-            System.out.println("Vertrag in DB gespeichert: " + contract.getID());
+            System.out.println("Contract stored in database: " + contract.getID());
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Speichern: " + e.getMessage());
+            System.err.println("Error saving: " + e.getMessage());
         }
     }
 
@@ -101,10 +124,8 @@ public class ContractLogic {
         Contract contract = getContractById(contractId);
         if (contract == null) return;
 
-        // Auto wieder verfügbar machen
         carLogic.updateAvailability(contract.getCar().getID(), true);
 
-        // Aus DB löschen
         String sql = "DELETE FROM contracts WHERE id = ?";
 
         try (Connection conn = Database.connect();
@@ -113,34 +134,51 @@ public class ContractLogic {
             pstmt.setString(1, contractId);
             pstmt.executeUpdate();
 
-            // Aus Liste entfernen
             contracts.remove(contract);
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Löschen: " + e.getMessage());
+            System.err.println("Error saving: " + e.getMessage());
         }
     }
 
-    private void calculateNextId() {
-        // Einfache ID-Berechnung
-        nextId = contracts.size() + 1;
+    public int getNextContractNumber() {
+        int max = 0;
+
+        for (Contract contract : contracts) {
+            String id = contract.getID();
+
+            if (id != null && id.startsWith("V")) {
+                try {
+                    int num = Integer.parseInt(id.substring(1));
+                    if (num > max) {
+                        max = num;
+                    }
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+
+        return max + 1;
     }
 
-    // Restliche Methoden bleiben gleich
     public List<Contract> getAllContracts() {
-        return contracts;
+        return new ArrayList<>(contracts);
     }
 
     public Contract getContractById(String id) {
         for (Contract c : contracts) {
-            if (c.getID().equals(id)) return c;
+            if (id != null && id.equals(c.getID())) return c;
         }
         return null;
     }
 
     public int calcPrice(int carPrice, LocalDate beginDate, LocalDate endDate) {
         long days = ChronoUnit.DAYS.between(beginDate, endDate) + 1;
-        if (days <= 0) throw new IllegalArgumentException("Invalid contract duration");
+
+        if (days <= 0) {
+            throw new IllegalArgumentException("Invalid contract duration");
+        }
+
         return Math.toIntExact(days) * carPrice;
     }
 }

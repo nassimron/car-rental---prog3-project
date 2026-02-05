@@ -2,48 +2,56 @@ package de.hochschule.carrental.data;
 
 public class Customer {
 
-    private String ID;
-    private String Name;
-    private String DLNumber;
-    private String Email;
+    private String id;
+    private String name;
+    private String driverLicenseNumber;
+    private String email;
 
-    public Customer(String ID, String Name, String DLNumber, String Email){
-        this.ID = ID;
-        this.Name = Name;
-        this.DLNumber = DLNumber;
-        this.Email = Email;
+    public Customer() {
+
+    }
+
+    public Customer(String id,
+                    String name,
+                    String driverLicenseNumber,
+                    String email) {
+
+        this.id = id;
+        this.name = name;
+        this.driverLicenseNumber = driverLicenseNumber;
+        this.email = email;
     }
 
 
     public String getID() {
-        return ID;
+        return id;
     }
 
-    public void setID(String ID) {
-        this.ID = ID;
+    public void setID(String id) {
+        this.id = id;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 
-    public String getDLNumber() {
-        return DLNumber;
+    public String getDriverLicenseNumber() {
+        return driverLicenseNumber;
     }
 
-    public void setDLNumber(String DLNumber) {
-        this.DLNumber = DLNumber;
+    public void setDriverLicenseNumber(String driverLicenseNumber) {
+        this.driverLicenseNumber = driverLicenseNumber;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        this.Email = email;
+        this.email = email;
     }
 }

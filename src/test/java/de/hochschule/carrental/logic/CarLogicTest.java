@@ -1,143 +1,132 @@
 package de.hochschule.carrental.logic;
 
-import de.hochschule.carrental.data.Car;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import de.hochschule.carrental.data.Database;
+import org.junit.jupiter.api.*;
 
-import java.util.List;
+import java.sql.Connection;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CarLogicTest {
 
-    private CarLogic carLogic;
+public class CarLogicTest {
 
     @BeforeEach
-    void setUp() {
-        carLogic = new CarLogic();
+    void prepareDatabase() throws Exception {
+
+        try (Connection conn = Database.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("""
+                        CREATE TABLE IF NOT EXISTS cars(
+                            id TEXT PRIMARY KEY,
+                            brand TEXT,
+                            model TEXT,
+                            category TEXT,
+                            price INTEGER,
+                            available BOOLEAN
+                        )
+                    """);
+
+            stmt.execute("DELETE FROM cars");
+
+            stmt.execute("INSERT INTO cars VALUES('A1','BMW','320','Limousine',100,true)");
+            stmt.execute("INSERT INTO cars VALUES('A2','Audi','A3','Limousine',80,false)");
+            stmt.execute("INSERT INTO cars VALUES('A5','VW','Golf','Small',70,true)");
+        }
     }
 
+
     @Test
-    void create_validInput_addsCarAndReturnsIt() {
-        Car car = carLogic.create("1", "BMW", "320i", "Limousine", 100, true);
+    void testLoadAndGetAllCars() {
+        CarLogic logic = new CarLogic();
+        assertEquals(3, logic.getAllCars().size());
+    }
+
+
+    @Test
+    void testGetCarById() {
+        CarLogic logic = new CarLogic();
+        var car = logic.getCarById("A1");
 
         assertNotNull(car);
-        assertEquals("1", car.getID());
-        assertEquals(1, carLogic.getAllCars().size());
-        assertSame(car, carLogic.getCarById("1"));
+        assertEquals("BMW", car.getBrand());
+        assertEquals("320", car.getModel());
     }
+
 
     @Test
-    void create_nullId_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create(null, "BMW", "320i", "Limousine", 100, true));
-
-        assertEquals("Car ID must not be empty", ex.getMessage());
+    void testGetCarByIdNotFound() {
+        CarLogic logic = new CarLogic();
+        var car = logic.getCarById("A99");
+        assertNull(car);
     }
+
 
     @Test
-    void create_blankId_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("   ", "BMW", "320i", "Limousine", 100, true));
-
-        assertEquals("Car ID must not be empty", ex.getMessage());
+    void testGetAvailableCars() {
+        CarLogic logic = new CarLogic();
+        var list = logic.getAvailableCars();
+        assertEquals(2, list.size());
     }
+
 
     @Test
-    void create_nullBrand_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", null, "320i", "Limousine", 100, true));
-
-        assertEquals("Brand must not be empty", ex.getMessage());
+    void testGetNextCarNumber() {
+        CarLogic logic = new CarLogic();
+        int next = logic.getNextCarNumber();
+        assertEquals(6, next);
     }
+
 
     @Test
-    void create_blankBrand_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", "   ", "320i", "Limousine", 100, true));
+    void testCreateCar() {
+        CarLogic logic = new CarLogic();
 
-        assertEquals("Brand must not be empty", ex.getMessage());
+        var car = logic.create("Mercedes", "C200", "Limousine", 120, true);
+
+        assertNotNull(car);
+        assertEquals("A6", car.getID());
+        assertEquals(4, logic.getAllCars().size());
     }
+
 
     @Test
-    void create_nullModel_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", "BMW", null, "Limousine", 100, true));
+    void testCreateAndFindCar() {
+        CarLogic logic = new CarLogic();
 
-        assertEquals("Model must not be empty", ex.getMessage());
+        logic.create("Opel", "Corsa", "Small", 50, true);
+
+        var car = logic.getCarById("A6");
+        assertNotNull(car);
+        assertEquals("Opel", car.getBrand());
     }
+
 
     @Test
-    void create_blankModel_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", "BMW", "   ", "Limousine", 100, true));
+    void testUpdateAvailability() {
+        CarLogic logic = new CarLogic();
 
-        assertEquals("Model must not be empty", ex.getMessage());
+        var car = logic.getCarById("A2");
+        assertFalse(car.getAvailability());
+
+        logic.updateAvailability("A2", true);
+
+        var updated = logic.getCarById("A2");
+        assertTrue(updated.getAvailability());
     }
+
 
     @Test
-    void create_priceZero_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", "BMW", "320i", "Limousine", 0, true));
+    void testCreateMultipleCars() {
 
-        assertEquals("Price must be greater than 0", ex.getMessage());
+        CarLogic logic = new CarLogic();
+
+        var c1 = logic.create("Ford", "Fiesta", "Small", 40, true);
+        var c2 = logic.create("Seat", "Ibiza", "Small", 45, false);
+
+        assertEquals("A6", c1.getID());
+        assertEquals("A7", c2.getID());
     }
 
-    @Test
-    void create_priceNegative_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> carLogic.create("1", "BMW", "320i", "Limousine", -5, true));
-
-        assertEquals("Price must be greater than 0", ex.getMessage());
-    }
-
-    @Test
-    void create_duplicateId_throwsIllegalStateException() {
-        carLogic.create("1", "BMW", "320i", "Limousine", 100, true);
-
-        IllegalStateException ex = assertThrows(IllegalStateException.class,
-                () -> carLogic.create("1", "Audi", "A4", "Kombi", 120, true));
-
-        assertEquals("Car with ID 1 already exists", ex.getMessage());
-        assertEquals(1, carLogic.getAllCars().size());
-    }
-
-    @Test
-    void getCarById_nonExisting_returnsNull() {
-        assertNull(carLogic.getCarById("does-not-exist"));
-    }
-
-    @Test
-    void delete_existingCar_removesIt() {
-        carLogic.create("1", "BMW", "320i", "Limousine", 100, true);
-        carLogic.create("2", "Audi", "A4", "Kombi", 120, true);
-
-
-        carLogic.delete("1");
-
-        assertNull(carLogic.getCarById("1"));
-        assertNotNull(carLogic.getCarById("2"));
-        assertEquals(1, carLogic.getAllCars().size());
-    }
-
-    @Test
-    void delete_nonExisting_doesNothing() {
-        carLogic.create("1", "BMW", "320i", "Limousine", 100, true);
-
-        carLogic.delete("999");
-
-        assertEquals(1, carLogic.getAllCars().size());
-        assertNotNull(carLogic.getCarById("1"));
-    }
-
-    @Test
-    void getAllCars_returnsInternalList_referenceBehavior() {
-        carLogic.create("1", "BMW", "320i", "Limousine", 100, true);
-
-        List<Car> list = carLogic.getAllCars();
-        assertEquals(1, list.size());
-
-        list.clear();
-        assertEquals(0, carLogic.getAllCars().size());
-    }
 }

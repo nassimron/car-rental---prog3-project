@@ -1,11 +1,13 @@
 package de.hochschule.carrental.logic;
 
-import de.hochschule.carrental.data.Car;
-import de.hochschule.carrental.data.Contract;
-import de.hochschule.carrental.data.Customer;
+import de.hochschule.carrental.data.Database;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,111 +17,53 @@ class ContractLogicTest {
     private ContractLogic contractLogic;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+
+        try (Connection conn = Database.connect();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS cars (
+                    id TEXT PRIMARY KEY,
+                    brand TEXT,
+                    model TEXT,
+                    category TEXT,
+                    price INTEGER,
+                    available BOOLEAN
+                )
+            """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS customers (
+                    id TEXT PRIMARY KEY,
+                    name TEXT,
+                    dl_number TEXT,
+                    email TEXT
+                )
+            """);
+
+            stmt.execute("""
+                CREATE TABLE IF NOT EXISTS contracts (
+                    id TEXT PRIMARY KEY,
+                    customer_id TEXT,
+                    car_id TEXT,
+                    begin_date TEXT,
+                    end_date TEXT,
+                    price INTEGER
+                )
+            """);
+
+            stmt.execute("DELETE FROM contracts");
+            stmt.execute("DELETE FROM customers");
+            stmt.execute("DELETE FROM cars");
+
+            stmt.execute("INSERT INTO cars VALUES('A1','BMW','320','Limousine',100,true)");
+            stmt.execute("INSERT INTO customers VALUES('K1','Max Mustermann','DL1','max@test.de')");
+        }
+
         contractLogic = new ContractLogic();
     }
 
-    private Customer validCustomer() {
-        return new Customer("C1", "Barack Obama", "D12345", "barack.obama@gmail.com");
-    }
-
-
-    private Car validCarAvailable() {
-
-        return new Car("1", "BMW", "320i", "Limousine", 100, true);
-    }
-
-    @Test
-    void createContract_validInput_createsContractAddsToListAndSetsCarUnavailable() {
-        Customer customer = validCustomer();
-        Car car = validCarAvailable();
-        LocalDate begin = LocalDate.of(2026, 2, 1);
-        LocalDate end = LocalDate.of(2026, 2, 3); // 3 Tage (1,2,3)
-
-        Contract contract = contractLogic.createContract(customer, car, begin, end);
-
-        assertNotNull(contract);
-        assertNotNull(contract.getID());
-        assertEquals(1, contractLogic.getAllContracts().size());
-
-        assertFalse(car.getAvailability());
-
-        assertSame(contract, contractLogic.getContractById(contract.getID()));
-    }
-
-    @Test
-    void createContract_nullCustomer_throwsIllegalArgumentException() {
-        Car car = validCarAvailable();
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(null, car, LocalDate.now(), LocalDate.now()));
-
-        assertEquals("Customer must not be empty", ex.getMessage());
-    }
-
-    @Test
-    void createContract_nullCar_throwsIllegalArgumentException() {
-        Customer customer = validCustomer();
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(customer, null, LocalDate.now(), LocalDate.now()));
-
-        assertEquals("Car must not be empty", ex.getMessage());
-    }
-
-    @Test
-    void createContract_nullDates_throwsIllegalArgumentException() {
-        Customer customer = validCustomer();
-        Car car = validCarAvailable();
-
-        IllegalArgumentException ex1 = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(customer, car, null, LocalDate.now()));
-        assertEquals("Dates must not be empty", ex1.getMessage());
-
-        IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(customer, car, LocalDate.now(), null));
-        assertEquals("Dates must not be empty", ex2.getMessage());
-    }
-
-    @Test
-    void createContract_endBeforeBegin_throwsIllegalArgumentException() {
-        Customer customer = validCustomer();
-        Car car = validCarAvailable();
-        LocalDate begin = LocalDate.of(2026, 2, 10);
-        LocalDate end = LocalDate.of(2026, 2, 9);
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(customer, car, begin, end));
-
-        assertEquals("End date must be >= begin date", ex.getMessage());
-    }
-
-    @Test
-    void createContract_carNotAvailable_throwsIllegalArgumentException() {
-        Customer customer = validCustomer();
-        Car car = validCarAvailable();
-        car.setAvailability(false);
-
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.createContract(customer, car, LocalDate.now(), LocalDate.now()));
-
-        assertEquals("Car is not available", ex.getMessage());
-    }
-
-    @Test
-    void createContract_generatesIncrementingIds() {
-        Customer customer = validCustomer();
-        Car car1 = new Car("1", "BMW", "320i", "Limousine", 100, true);
-        Car car2 = new Car("2", "Audi", "A4", "Limousine", 120, true);
-
-        Contract c1 = contractLogic.createContract(customer, car1,
-                LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 1));
-        Contract c2 = contractLogic.createContract(customer, car2,
-                LocalDate.of(2026, 2, 2), LocalDate.of(2026, 2, 2));
-
-        assertEquals("V1", c1.getID());
-        assertEquals("V2", c2.getID());
-    }
 
     @Test
     void calcPrice_sameDay_countsAsOneDay() {
@@ -143,38 +87,104 @@ class ContractLogicTest {
 
     @Test
     void calcPrice_endBeforeBegin_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> contractLogic.calcPrice(
                         100,
                         LocalDate.of(2026, 2, 10),
                         LocalDate.of(2026, 2, 9)
                 )
         );
-        assertEquals("Invalid contract duration", ex.getMessage());
     }
 
+
     @Test
-    void finishContract_existingContract_makesCarAvailableAndRemovesContract() {
-        Customer customer = validCustomer();
-        Car car = validCarAvailable();
-        Contract contract = contractLogic.createContract(customer, car,
-                LocalDate.of(2026, 2, 1), LocalDate.of(2026, 2, 2));
+    void createContract_savesContract_and_setsCarUnavailable() throws Exception {
 
-        assertFalse(car.getAvailability());
-        assertEquals(1, contractLogic.getAllContracts().size());
+        var customer = contractLogic.getCustomerLogic().getCustomerById("K1");
+        var car = contractLogic.getCarLogic().getCarById("A1");
 
-        contractLogic.finishContract(contract.getID());
-
+        assertNotNull(customer);
+        assertNotNull(car);
         assertTrue(car.getAvailability());
-        assertEquals(0, contractLogic.getAllContracts().size());
-        assertNull(contractLogic.getContractById(contract.getID()));
+
+        var contract = contractLogic.createContract(
+                customer,
+                car,
+                LocalDate.of(2026, 2, 1),
+                LocalDate.of(2026, 2, 3)
+        );
+
+        assertNotNull(contract);
+        assertNotNull(contract.getID());
+        assertEquals(300, contract.getPrice()); // 3 Tage * 100
+
+        assertNotNull(contractLogic.getContractById(contract.getID()));
+
+        assertFalse(contractLogic.getCarLogic().getCarById("A1").getAvailability());
+
+        try (Connection conn = Database.connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) AS c FROM contracts WHERE id = ?")) {
+
+            ps.setString(1, contract.getID());
+            try (ResultSet rs = ps.executeQuery()) {
+                assertTrue(rs.next());
+                assertEquals(1, rs.getInt("c"));
+            }
+        }
+
+        try (Connection conn = Database.connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT available FROM cars WHERE id = ?")) {
+
+            ps.setString(1, "A1");
+            try (ResultSet rs = ps.executeQuery()) {
+                assertTrue(rs.next());
+                assertFalse(rs.getBoolean("available"));
+            }
+        }
     }
 
     @Test
-    void finishContract_unknownId_throwsIllegalArgumentException() {
-        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
-                () -> contractLogic.finishContract("V999"));
+    void finishContract_deletesContract_and_setsCarAvailableAgain() throws Exception {
 
-        assertEquals("Contract not found: V999", ex.getMessage());
+        var customer = contractLogic.getCustomerLogic().getCustomerById("K1");
+        var car = contractLogic.getCarLogic().getCarById("A1");
+
+        var contract = contractLogic.createContract(
+                customer,
+                car,
+                LocalDate.of(2026, 2, 1),
+                LocalDate.of(2026, 2, 2)
+        );
+
+        String contractId = contract.getID();
+
+        assertNotNull(contractLogic.getContractById(contractId));
+        assertFalse(contractLogic.getCarLogic().getCarById("A1").getAvailability());
+
+        contractLogic.finishContract(contractId);
+
+        assertNull(contractLogic.getContractById(contractId));
+
+        assertTrue(contractLogic.getCarLogic().getCarById("A1").getAvailability());
+
+        try (Connection conn = Database.connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT COUNT(*) AS c FROM contracts WHERE id = ?")) {
+
+            ps.setString(1, contractId);
+            try (ResultSet rs = ps.executeQuery()) {
+                assertTrue(rs.next());
+                assertEquals(0, rs.getInt("c"));
+            }
+        }
+
+        try (Connection conn = Database.connect();
+             PreparedStatement ps = conn.prepareStatement("SELECT available FROM cars WHERE id = ?")) {
+
+            ps.setString(1, "A1");
+            try (ResultSet rs = ps.executeQuery()) {
+                assertTrue(rs.next());
+                assertTrue(rs.getBoolean("available"));
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ package de.hochschule.carrental.jooq.tables;
 
 import de.hochschule.carrental.jooq.DefaultSchema;
 import de.hochschule.carrental.jooq.Keys;
+import de.hochschule.carrental.jooq.tables.Contracts.ContractsPath;
 import de.hochschule.carrental.jooq.tables.records.CustomersRecord;
 
 import java.util.Arrays;
@@ -14,9 +15,13 @@ import java.util.List;
 
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
+import org.jooq.InverseForeignKey;
 import org.jooq.Name;
+import org.jooq.Path;
 import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
+import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.Schema;
 import org.jooq.Select;
@@ -100,6 +105,37 @@ public class Customers extends TableImpl<CustomersRecord> {
         this(DSL.name("customers"), null);
     }
 
+    public <O extends Record> Customers(Table<O> path, ForeignKey<O, CustomersRecord> childPath, InverseForeignKey<O, CustomersRecord> parentPath) {
+        super(path, childPath, parentPath, CUSTOMERS);
+    }
+
+    /**
+     * A subtype implementing {@link Path} for simplified path-based joins.
+     */
+    public static class CustomersPath extends Customers implements Path<CustomersRecord> {
+        public <O extends Record> CustomersPath(Table<O> path, ForeignKey<O, CustomersRecord> childPath, InverseForeignKey<O, CustomersRecord> parentPath) {
+            super(path, childPath, parentPath);
+        }
+        private CustomersPath(Name alias, Table<CustomersRecord> aliased) {
+            super(alias, aliased);
+        }
+
+        @Override
+        public CustomersPath as(String alias) {
+            return new CustomersPath(DSL.name(alias), this);
+        }
+
+        @Override
+        public CustomersPath as(Name alias) {
+            return new CustomersPath(alias, this);
+        }
+
+        @Override
+        public CustomersPath as(Table<?> alias) {
+            return new CustomersPath(alias.getQualifiedName(), this);
+        }
+    }
+
     @Override
     public Schema getSchema() {
         return aliased() ? null : DefaultSchema.DEFAULT_SCHEMA;
@@ -113,6 +149,18 @@ public class Customers extends TableImpl<CustomersRecord> {
     @Override
     public List<UniqueKey<CustomersRecord>> getUniqueKeys() {
         return Arrays.asList(Keys.CUSTOMERS__UK_CUSTOMERS_36232069);
+    }
+
+    private transient ContractsPath _contracts;
+
+    /**
+     * Get the implicit to-many join path to the <code>contracts</code> table
+     */
+    public ContractsPath contracts() {
+        if (_contracts == null)
+            _contracts = new ContractsPath(this, null, Keys.CONTRACTS__FK_CONTRACTS_PK_CUSTOMERS.getInverseKey());
+
+        return _contracts;
     }
 
     @Override
