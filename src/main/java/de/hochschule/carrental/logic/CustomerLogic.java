@@ -8,18 +8,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerLogic {
+
     private final List<Customer> customers = new ArrayList<>();
 
     public CustomerLogic() {
         loadFromDatabase();
     }
 
+
     private void loadFromDatabase() {
-        String sql = "SELECT * FROM customers";
+        String sql = "SELECT id, name, dl_number, email FROM customers";
 
         try (Connection conn = Database.connect();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
+
+            customers.clear();
 
             while (rs.next()) {
                 Customer customer = new Customer(
@@ -32,25 +36,62 @@ public class CustomerLogic {
             }
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Laden: " + e.getMessage());
+            System.out.println("Fehler beim Laden der Kunden: " + e.getMessage());
         }
     }
 
-    public Customer create(String ID, String Name, String DLNumber, String Email) {
-        if (ID == null || ID.isBlank())
-            throw new IllegalArgumentException("Customer ID must not be empty");
+
+    public int getNextCustomerNumber() {
+        int max = 0;
 
         for (Customer c : customers) {
-            if (c.getID().equals(ID)) {
-                throw new IllegalStateException("Customer with ID " + ID + " already exists");
+            String id = c.getID();
+
+            if (id != null && id.startsWith("K")) {
+                try {
+                    int number = Integer.parseInt(id.substring(1));
+                    if (number > max) {
+                        max = number;
+                    }
+                } catch (NumberFormatException ignored) {
+
+                }
             }
         }
 
-        Customer customer = new Customer(ID, Name, DLNumber, Email);
+        return max + 1;
+    }
+
+
+    public Customer create(String name, String dlNumber, String email) {
+        String id = "K" + getNextCustomerNumber();
+        return create(id, name, dlNumber, email);
+    }
+
+    public Customer create(String id, String name, String dlNumber, String email) {
+
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("Customer ID must not be empty");
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Name must not be empty");
+        }
+        if (dlNumber == null || dlNumber.isBlank()) {
+            throw new IllegalArgumentException("Driver license must not be empty");
+        }
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email must not be empty");
+        }
+
+        if (getCustomerById(id) != null) {
+            throw new IllegalStateException("Customer with ID " + id + " already exists");
+        }
+
+        Customer customer = new Customer(id, name, dlNumber, email);
 
         saveToDatabase(customer);
-
         customers.add(customer);
+
         return customer;
     }
 
@@ -66,26 +107,9 @@ public class CustomerLogic {
             pstmt.setString(4, customer.getEmail());
 
             pstmt.executeUpdate();
-            System.out.println("Kunde in DB gespeichert: " + customer.getID());
 
         } catch (SQLException e) {
-            System.err.println("Fehler beim Speichern: " + e.getMessage());
-        }
-    }
-
-    public void delete(String id) {
-        String sql = "DELETE FROM customers WHERE id = ?";
-
-        try (Connection conn = Database.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, id);
-            pstmt.executeUpdate();
-
-            customers.removeIf(c -> c.getID().equals(id));
-
-        } catch (SQLException e) {
-            System.err.println("Fehler beim Löschen: " + e.getMessage());
+            System.out.println("Fehler beim Speichern des Kunden: " + e.getMessage());
         }
     }
 
