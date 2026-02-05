@@ -19,7 +19,7 @@ Vertragsverwaltung
 - Verknüpfung von Kunde und Auto
 
 Persistenz
-- Zentrale In-Memory-Datenhaltung über Database
+- Zentrale Datenhaltung über Database-Klasse
 
 ## Projektstruktur
 - `data` - Car, Contract, Database
@@ -33,18 +33,22 @@ Persistenz
 - Maven
 
 ## Fehlerbehebung
-Häufige Fahler:
+Häufige Fehler:
 - Java-Version nicht korrekt.
   Fehlermeldung:
   ```bash
   Fehler: java version is not supported
   ```
-  Mit "java -version"  Version Überprüfen und falls <17, Java 17 oder höher installieren
+  Lösungsversuch:
+  
+  Mit "java -version"  Version überprüfen und falls <17, Java 17 oder höher installieren
 
 - Maven Fehlermeldung:
   ```bash
   mvn : Die Benennung "mvn" wurde nicht als Name eines Cmdlet, ...
   ```
+  Lösungsversuch:
+  
   Mit "mvn -v"  Maven Überprüfen und falls nicht gefunden, Maven neu installieren.
   Sollte ein Build-Fehler auftreten "mvn clean compile" ausführen.
   
