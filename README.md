@@ -1,58 +1,113 @@
-# car-rental---prog3-project
+# Car Rental System -- Programmieren 3 Projekt
 
 ## Beschreibung
-Dieses Repository enthält ein konsolenbasiertes Car-Rental-System in Java, entwickelt im Rahmen der Prüfung Programmieren 3. Der Fokus liegt auf sauberer Struktur, klarer Trennung von Zuständigkeiten und nachvollziehbarer Geschäftslogik.
 
+Dieses Repository enthält ein konsolenbasiertes Car-Rental-System in
+Java, das im Rahmen der Prüfung **Programmieren 3** entwickelt wurde.
+
+Ziel des Projekts ist die Umsetzung eines einfachen Verwaltungssystems
+für Fahrzeuge, Kunden und Mietverträge mit klarer Struktur und Trennung
+der Zuständigkeiten.
+
+Der Fokus liegt auf: - sauberem Code - nachvollziehbarer
+Geschäftslogik - Nutzung einer Datenbank zur Persistenz - Testbarkeit
+durch JUnit
+
+------------------------------------------------------------------------
 
 ## Features
-Fahrzeuge
-- Autos anlegen
-- Autos anzeigen
-- Verfügbarkeitsstatus verwalten
 
-Kundenverwaltung
-- Kunden anlegen
-- Kunden anzeigen
+### Fahrzeugverwaltung
 
-Vertragsverwaltung
-- Mietverträge erstellen
-- Verknüpfung von Kunde und Auto
+-   Autos anlegen
+-   Autos anzeigen
+-   Verfügbarkeit verwalten
 
-Persistenz
-- Zentrale Datenhaltung über Database-Klasse
+### Kundenverwaltung
+
+-   Kunden anlegen
+-   Kunden anzeigen
+
+### Vertragsverwaltung
+
+-   Mietverträge erstellen
+-   Verknüpfung von Kunde und Auto
+-   Automatische Preisberechnung
+
+### Persistenz
+
+-   Zentrale Datenhaltung über eine SQLite-Datenbank
+-   Verwaltung über die `Database`-Klasse
+
+### Tests
+
+-   Unit- und Integrationstests mit JUnit
+
+------------------------------------------------------------------------
 
 ## Projektstruktur
-- `data` - Car, Contract, Database
-- `jooq` - DefaultCatalog, DefaultSchema, Keys, Tables
-- `logic` - CarLogic, ContractLogic, CustomerLogic
-- `presentation` - ConsoleUI, UIHelper
-- `test` - JUnit Tests
+
+    src/main/java/de/hochschule/carrental
+    │
+    ├── data          → Datenklassen (Car, Customer, Contract, Database)
+    ├── logic         → Geschäftslogik (CarLogic, CustomerLogic, ContractLogic)
+    ├── presentation  → Konsolenoberfläche (ConsoleUI, UIHelper)
+    ├── jooq          → Generierte Klassen (jOOQ)
+    └── App.java      → Startpunkt der Anwendung
+
+    src/test/java
+    └── JUnit-Tests für data- und logic-Klassen
+
+------------------------------------------------------------------------
 
 ## Voraussetzungen
-- Java 17+
-- Maven
+
+-   Java 17 oder höher
+-   Maven
+
+------------------------------------------------------------------------
+
+## Installation & Start
+
+### Projekt kompilieren und testen
+
+mvn clean test
+
+### Programm starten
+
+mvn clean compile exec:java
+
+oder über die IDE mit:
+
+de.hochschule.carrental.App
+
+------------------------------------------------------------------------
+
+## Datenbank
+
+-   Verwendet wird SQLite
+-   Die Datenbank wird automatisch beim Start initialisiert
+-   Speicherort: data/carrental.db
+
+------------------------------------------------------------------------
 
 ## Fehlerbehebung
-Häufige Fehler:
-- Java-Version nicht korrekt.
-  Fehlermeldung:
-  ```bash
-  Fehler: java version is not supported
-  ```
-  Lösungsversuch:
-  
-  Mit "java -version"  Version überprüfen und falls <17, Java 17 oder höher installieren
 
-- Maven Fehlermeldung:
-  ```bash
-  mvn : Die Benennung "mvn" wurde nicht als Name eines Cmdlet, ...
-  ```
-  Lösungsversuch:
-  
-  Mit "mvn -v"  Maven Überprüfen und falls nicht gefunden, Maven neu installieren.
-  Sollte ein Build-Fehler auftreten "mvn clean compile" ausführen.
-  
+### Java-Version nicht korrekt
 
-## Starten
-```bash
-mvn clean testh
+java -version
+
+### Maven nicht erkannt
+
+mvn -v
+
+------------------------------------------------------------------------
+
+## Autor
+
+Lennart Braun
+Sidney Burkhardt
+Amar Chahror
+Nassim Roncoroni
+
+Projekt im Rahmen der Veranstaltung **Programmieren 3**
