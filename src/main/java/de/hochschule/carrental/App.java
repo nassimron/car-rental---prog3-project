@@ -8,6 +8,7 @@ public class App {
         System.out.println("=== Car Rental System ===");
 
         // 1. Datenbank initialisieren
+        System.setProperty("db_url", "jdbc:sqlite:data/carrental.db");
         Database.init();
 
         // 2. UI starten

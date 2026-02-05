@@ -7,11 +7,12 @@ import java.sql.Statement;
 
 public class Database {
 
-    private static final String DB_URL = "jdbc:sqlite:data/carrental.db";
+    private static final String DEFAULT_DB_URL = "jdbc:sqlite:data/carrental.db";
 
     public static Connection connect() {
         try {
-            return DriverManager.getConnection(DB_URL);
+            String url = System.getProperty("db_url");
+            return DriverManager.getConnection(url);
         } catch (SQLException e) {
 
             throw new RuntimeException("Verbindungsfehler zur Datenbank", e);

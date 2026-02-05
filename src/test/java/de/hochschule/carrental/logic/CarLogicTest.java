@@ -13,6 +13,7 @@ public class CarLogicTest {
 
     @BeforeEach
     void prepareDatabase() throws Exception {
+        System.setProperty("db_url","jdbc:sqlite:data/test.db");
 
         try (Connection conn = Database.connect();
              Statement stmt = conn.createStatement()) {
