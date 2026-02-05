@@ -57,7 +57,7 @@ public class ConsoleUI {
                 switch (input) {
 
                     case "0":
-                        System.out.println("Bye!");
+                        System.out.println("Program closed");
                         System.exit(0);
 
                     case "1":
@@ -279,7 +279,7 @@ public class ConsoleUI {
             email = read();
         }
 
-        customerLogic.create("test", name, dlNumber, email);
+        customerLogic.create(name, dlNumber, email);
 
         pressEnterToContinue("Customer created.");
     }
